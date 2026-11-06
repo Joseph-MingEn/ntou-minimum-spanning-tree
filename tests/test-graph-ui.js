@@ -37,5 +37,5 @@ assert.equal(element('forest-warning').hidden, true);
 for (let i=0;i<5;i++) element('next').click();
 graph=element('graph').innerHTML;
 assert.match(graph, /class="edge skipped"/, '跳過的邊應標示');
-assert.match(graph, /class="weight skipped"[^>]*>4<\/text>/, '跳過的邊權重應標紅');
+assert.match(graph, /class="weight skipped"[^>]*>4<\/text>/, '跳過的邊權重應標記為 skipped');
 console.log('圖形模式測試通過');
