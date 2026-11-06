@@ -18,9 +18,17 @@ assert.equal((element('graph').innerHTML.match(/class="edge disconnected"/g)||[]
 tabs[2].click();
 let graph = element('graph').innerHTML;
 assert.equal((graph.match(/class="edge disconnected"/g)||[]).length, 5, '5 條移除道路以虛線顯示');
-assert.equal((graph.match(/class="weight-cross"/g)||[]).length, 5, '5 個權重各顯示叉號');
+assert.equal((graph.match(/class="weight-cross"/g)||[]).length, 0, '權重數字不直接畫叉');
+assert.match(graph, /class="node isolated"/, '孤立的 F 應以紅框標示');
+assert.match(graph, /沒接到/, '孤立的 F 應有文字說明');
+assert.equal(element('forest-warning').hidden, false, '不連通時顯示叉號與說明');
 assert.equal(element('graph-pill').textContent,'6 頂點 · 4 邊');
 tabs[0].click();
 graph = element('graph').innerHTML;
 assert.equal((graph.match(/class="edge disconnected"/g)||[]).length, 0, '連通模式不得顯示中斷道路');
+assert.equal(element('forest-warning').hidden, true);
+for (let i=0;i<5;i++) element('next').click();
+graph=element('graph').innerHTML;
+assert.match(graph, /class="edge skipped"/, '跳過的邊應標示');
+assert.match(graph, /class="weight skipped"[^>]*>4<\/text>/, '跳過的邊權重應標紅');
 console.log('圖形模式測試通過');
