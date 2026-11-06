@@ -27,7 +27,8 @@ function render() {
   $('mode-caption').textContent=forest?'KRUSKAL · 最小生成森林':isPrim?'PRIM · 從 A 出發':'KRUSKAL · 由小到大檢查邊';
   $('step-count').textContent=`${index} / ${result.steps.length}`; $('progress-bar').style.width=`${index/result.steps.length*100}%`;
   $('total').textContent=step?step.total:0; $('prev').disabled=index===0; $('next').disabled=index===result.steps.length;
-  $('parents').style.display=isPrim?'none':'flex'; $('parents').querySelector('code').textContent=step?`[${step.parents.join(', ')}]`:'[0, 1, 2, 3, 4, 5]';
+  $('parents').style.display=isPrim?'none':'flex';
+  if (!isPrim) $('parents').querySelector('code').textContent=step?`[${step.parents.join(', ')}]`:'[0, 1, 2, 3, 4, 5]';
   if (!step) { $('step-label').textContent='準備開始'; $('step-title').textContent=isPrim?'從 A 開始向外擴展':'從最小的邊開始'; $('step-description').textContent=isPrim?'選擇連接目前樹與新頂點的最小候選邊。':'依權重排序，依序判斷每條邊是否形成環。'; }
   else {
     $('step-label').textContent=`第 ${index} 步 · 權重 ${step.w}`;
