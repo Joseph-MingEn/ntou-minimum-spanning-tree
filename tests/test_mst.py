@@ -36,5 +36,6 @@ class AssignmentTest(unittest.TestCase):
 
     def test_browser_algorithms(self):
         subprocess.run(['node', str(ROOT/'tests/test-web.js')], check=True)
+        subprocess.run(['node', str(ROOT/'tests/test-graph-ui.js')], check=True)
 
 if __name__ == '__main__': unittest.main()

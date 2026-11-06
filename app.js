@@ -6,16 +6,19 @@ let mode='kruskal', index=0;
 const $=id=>document.getElementById(id);
 const edgeName=s=>`${names[s.from]}–${names[s.to]}`;
 function renderGraph() {
-  const graphEdges=mode==='forest'?forestEdges:edges;
+  // 非連通模式仍繪製被移除的原道路供對照，但不加入演算法輸入。
+  const graphEdges=edges;
   const taken=data[mode].steps.slice(0,index).filter(s=>s.accepted);
   const last=index?data[mode].steps[index-1]:null;
   const matches=(s,u,v)=>s && ((s.from===u&&s.to===v)||(s.from===v&&s.to===u));
   let html='';
   for (const [w,u,v] of graphEdges) {
     const [x1,y1]=points[u], [x2,y2]=points[v];
-    const state=last&&!last.accepted&&matches(last,u,v)?'skipped':taken.some(s=>matches(s,u,v))?'selected':'';
+    const disconnected=mode==='forest' && !forestEdges.some(([,a,b])=>a===u && b===v);
+    const state=disconnected?'disconnected':last&&!last.accepted&&matches(last,u,v)?'skipped':taken.some(s=>matches(s,u,v))?'selected':'';
     const x=(x1+x2)/2,y=(y1+y2)/2;
-    html+=`<line class="edge ${state}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><circle class="weight-bg" cx="${x}" cy="${y}" r="15"/><text class="weight" x="${x}" y="${y}">${w}</text>`;
+    const cross=disconnected?`<g class="weight-cross" aria-hidden="true"><line x1="${x-10}" y1="${y-10}" x2="${x+10}" y2="${y+10}"/><line x1="${x+10}" y1="${y-10}" x2="${x-10}" y2="${y+10}"/></g>`:'';
+    html+=`<line class="edge ${state}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><circle class="weight-bg" cx="${x}" cy="${y}" r="15"/><text class="weight" x="${x}" y="${y}">${w}</text>${cross}`;
   }
   points.forEach(([x,y],i)=>{const labelY=i===2||i===4?y+56:y-52; html+=`<text class="node-label" x="${x}" y="${labelY}">${places[i]}</text><g class="node"><circle cx="${x}" cy="${y}" r="29"/><text x="${x}" y="${y}">${names[i]}</text></g>`});
   $('graph').innerHTML=html;
@@ -23,6 +26,8 @@ function renderGraph() {
 function render() {
   const result=data[mode], step=index?result.steps[index-1]:null, forest=mode==='forest', isPrim=mode==='prim';
   document.querySelectorAll('.tab').forEach(b=>{const active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+  $('disconnected-legend').hidden=!forest;
+  $('graph').setAttribute('aria-label',forest?'非連通圖：共有四條可用邊；B-D、C-D、C-E、D-F、E-F 為中斷道路，以虛線與叉號顯示。':'校園六個頂點與九條加權邊的圖');
   $('graph-title').textContent=forest?'非連通圖':'校園連通圖'; $('graph-pill').textContent=forest?'6 頂點 · 4 邊':'6 頂點 · 9 邊';
   $('mode-caption').textContent=forest?'KRUSKAL · 最小生成森林':isPrim?'PRIM · 從 A 出發':'KRUSKAL · 由小到大檢查邊';
   $('step-count').textContent=`${index} / ${result.steps.length}`; $('progress-bar').style.width=`${index/result.steps.length*100}%`;
