@@ -25,7 +25,6 @@ function renderGraph() {
 function render() {
   const result=data[mode], step=index?result.steps[index-1]:null, forest=mode==='forest', isPrim=mode==='prim';
   document.querySelectorAll('.tab').forEach(b=>{const active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
-  $('disconnected-legend').hidden=!forest;
   $('forest-warning').hidden=!forest;
   $('graph').setAttribute('aria-label',forest?'非連通圖：共有四條可用邊；B-D、C-D、C-E、D-F、E-F 為中斷道路，以淡色虛線顯示；F 為孤立頂點。':'校園六個頂點與九條加權邊的圖');
   $('graph-title').textContent=forest?'非連通圖':'校園連通圖'; $('graph-pill').textContent=forest?'6 頂點 · 4 邊':'6 頂點 · 9 邊';
