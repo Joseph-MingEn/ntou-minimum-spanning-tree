@@ -1,0 +1,13 @@
+const assert = require('node:assert/strict');
+const {kruskal, prim, edges, forestEdges} = require('../algorithms.js');
+const k = kruskal(6, edges), p = prim(6, edges, 0), f = kruskal(6, forestEdges);
+const names = steps => steps.filter(s => s.accepted && s.from !== -1).map(s => `${s.from}-${s.to}:${s.w}`);
+assert.deepEqual(names(k.steps), ['1-2:1','0-2:2','3-4:2','4-5:3','1-3:5']);
+assert.deepEqual(names(p.steps), ['0-2:2','2-1:1','1-3:5','3-4:2','4-5:3']);
+assert.equal(k.total, 13); assert.equal(p.total, 13);
+assert.equal(k.steps.length, 9); assert.equal(k.steps.filter(s => !s.accepted).length, 4);
+assert.deepEqual(k.steps[4].parents, [0,0,1,3,3,3]);
+assert.ok(p.steps.some(s => !s.accepted));
+assert.equal(f.total, 5); assert.equal(f.components, 3);
+assert.deepEqual(names(f.steps), ['1-2:1','0-2:2','3-4:2']);
+console.log('網頁演算法測試通過');
