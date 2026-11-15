@@ -26,6 +26,14 @@ function render() {
   const result=data[mode], step=index?result.steps[index-1]:null, forest=mode==='forest', isPrim=mode==='prim';
   document.querySelectorAll('.tab').forEach(b=>{const active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
   $('forest-warning').hidden=!forest;
+  $('connected-results').hidden=forest;
+  $('forest-result').hidden=!forest;
+  const selected=result.steps.slice(0,index).filter(s=>s.accepted);
+  $('chosen-order').textContent=selected.length?selected.map(s=>`${edgeName(s)}（${s.w}）`).join(' → '):'尚未收邊';
+  const complete=index===result.steps.length;
+  $('completion').hidden=!complete;
+  $('completion').textContent=complete?`✓ 完成${forest?'最小生成森林':'最小生成樹'}：${selected.length} 條邊，總權重 ${result.total}${forest?'，共 3 個連通分量':''}。`:'';
+  $('finish').disabled=complete;
   $('graph').setAttribute('aria-label',forest?'非連通圖：共有四條可用邊；B-D、C-D、C-E、D-F、E-F 為中斷道路，以淡色虛線顯示；F 為孤立頂點。':'校園六個頂點與九條加權邊的圖');
   $('graph-title').textContent=forest?'非連通圖':'校園連通圖'; $('graph-pill').textContent=forest?'6 頂點 · 4 邊':'6 頂點 · 9 邊';
   $('mode-caption').textContent=forest?'KRUSKAL · 最小生成森林':isPrim?'PRIM · 從 A 出發':'KRUSKAL · 由小到大檢查邊';
@@ -38,12 +46,12 @@ function render() {
     $('step-label').textContent=`第 ${index} 步 · 權重 ${step.w}`;
     $('step-title').textContent=`${step.accepted?'收下':'跳過'} ${edgeName(step)}`;
     $('step-description').textContent=step.accepted?'這條邊連接了尚未連通的部分，加入結果。':isPrim?'這張候選票的頂點已在樹中，丟棄舊票。':'兩端已連通，再加入會形成環。';
-    if (forest && index===result.steps.length) $('step-description').textContent='完成：3 個連通分量（含孤立的 F），形成總重 5 的最小生成森林。';
   }
   renderGraph();
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;index=0;render()}));
 $('prev').addEventListener('click',()=>{if(index>0){index--;render()}});
 $('next').addEventListener('click',()=>{if(index<data[mode].steps.length){index++;render()}});
+$('finish').addEventListener('click',()=>{index=data[mode].steps.length;render()});
 $('reset').addEventListener('click',()=>{index=0;render()});
 render();

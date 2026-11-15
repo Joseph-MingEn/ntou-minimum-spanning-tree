@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import pathlib, subprocess, tempfile, unittest
+import json, pathlib, re, subprocess, tempfile, unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -20,6 +20,19 @@ class AssignmentTest(unittest.TestCase):
         self.assertIn('A-B(4) 跳過（成環） p[] = [0, 0, 1, 3, 3, 3]', k)
         self.assertIn('總重: 13', k)
         self.assertEqual(k.count('p[] ='), 9)
+
+    def test_all_kruskal_steps_match_web(self):
+        web = json.loads(subprocess.check_output(
+            ['node', '-e', "const a=require('./algorithms.js'); console.log(JSON.stringify(a.kruskal(6,a.edges).steps))"],
+            cwd=ROOT, text=True))
+        output = self.output.split('=== Prim')[0]
+        rows = re.findall(r'([A-F])-([A-F])\((\d+)\) (收邊|跳過（成環）) p\[\] = \[([^]]+)\]', output)
+        self.assertEqual(len(rows), len(web))
+        for row, step in zip(rows, web):
+            u, v, weight, action, parents = row
+            self.assertEqual((ord(u)-65, ord(v)-65, int(weight)), (step['from'], step['to'], step['w']))
+            self.assertEqual(action == '收邊', step['accepted'])
+            self.assertEqual([int(x) for x in parents.split(', ')], step['parents'])
 
     def test_prim(self):
         p = self.output.split('=== Prim')[1].split('=== 非連通')[0]
