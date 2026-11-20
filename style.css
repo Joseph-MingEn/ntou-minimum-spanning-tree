@@ -7,3 +7,6 @@
 
 /* 收邊與最終結果：讓每一步及總權重容易核對。 */
 .graph-data{margin-top:16px;color:#647a6a;font-size:12px;line-height:1.7}.graph-data summary{cursor:pointer;font-weight:700;color:var(--green)}.graph-data p{margin:8px 0 0}.chosen-summary{border-top:1px solid #e8eee7;padding:12px 0 14px;font-size:11px;color:#738879}.chosen-summary span{font-weight:700}.chosen-summary p{color:#30583e;line-height:1.65;font-size:12px;font-weight:700;margin:6px 0 0}.finish{align-self:flex-end;border:0;background:none;color:var(--green);font-size:11px;font-weight:700;margin:12px 0 0;padding:4px 0}.finish:disabled{opacity:.45;cursor:default}.completion{margin:12px 0 0;padding:11px 12px;background:#edf5e9;border-radius:6px;color:var(--green);font-size:12px;font-weight:700;line-height:1.6}.completion[hidden],.result-grid[hidden]{display:none}.forest-result{grid-template-columns:1fr}
+
+/* 個人貢獻與 AI 協作說明 */
+.hero-actions{flex-wrap:wrap}.contribution{padding:75px 0 85px}.contribution-content{max-width:850px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:30px 34px}.contribution-content p{margin:0 0 18px;color:#53665a;font-size:1rem;line-height:1.9}.contribution-content p:last-child{margin-bottom:0}.contribution-content strong{color:var(--green)}@media(max-width:850px){.contribution{padding:55px 0}.contribution-content{padding:24px}}
